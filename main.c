@@ -28,15 +28,35 @@
 
 #include "rigsync.h"
 
-void read_args(int argc, char **argv);
-
+#if 0
 struct rs_rig_state { freq_t freq; rmode_t mode; pbwidth_t width; };
 void   rs_rig_read_state (RIG *rig, struct rs_rig_state *state);
 void   rs_rig_write_state(RIG *rig, struct rs_rig_state *state);
 int    rs_rig_state_cmp(struct rs_rig_state *statea, struct rs_rig_state *stateb);
 void   rs_rig_state_cpy(struct rs_rig_state *state_dest, struct rs_rig_state *state_orig);
 
+//#define RIG_A_MODEL RIG_MODEL_FT857
+#define RIG_A_MODEL RIG_MODEL_TS870S
+#define RIG_A_SPEED 38400
+#define RIG_A_PORT  "/dev/ttyF1"
+
+#define RIG_B_MODEL RIG_MODEL_NETRIGCTL /* rigctl server */
+#define RIG_B_PORT "localhost:4532"
+#endif /* 0 */
+
 int main(int argc, char **argv)
+{
+  setlocale(LC_NUMERIC, ""); // why isn't this working?
+  printf("abc: %'15.1f\n", 12345067890.0);
+  rig_set_debug(RIG_DEBUG_NONE);
+  read_args(argc, argv);
+  rig_sync();
+  return 0;
+}
+
+
+#if 0
+int xmain(int argc, char **argv)
 {
   RIG *riga, *rigb;
   rig_model_t modela, modelb;
@@ -52,17 +72,17 @@ int main(int argc, char **argv)
   rig_set_debug(RIG_DEBUG_NONE);
   
   read_args(argc, argv);
+  exit(0);
 
-  modela = RIG_MODEL_FT857;     /* Yaesu FT-857 */
-  modelb = RIG_MODEL_NETRIGCTL; /* rigctl server  */
+  modela = RIG_A_MODEL;
+  modelb = RIG_B_MODEL;
 
   riga = rig_init(modela);
   rigb = rig_init(modelb);
 
-
-  riga->state.rigport.parm.serial.rate = 38400;
-  strncpy(riga->state.rigport.pathname, "/dev/ttyUSB0", FILPATHLEN - 1);
-  strncpy(rigb->state.rigport.pathname, "localhost:4532", FILPATHLEN - 1);
+  riga->state.rigport.parm.serial.rate = RIG_A_SPEED;
+  strncpy(riga->state.rigport.pathname, RIG_A_PORT, FILPATHLEN - 1);
+  strncpy(rigb->state.rigport.pathname, RIG_B_PORT, FILPATHLEN - 1);
 
   retval = rig_open(riga);
   if(retval != RIG_OK) { fprintf(stderr, "*** Could not open FT857.\n"); exit(1); }
@@ -118,27 +138,6 @@ int main(int argc, char **argv)
   return 0;
 }
 
-void read_args(int argc, char **argv)
-{
-  int ii;
-  for(ii=0 ; ii<argc ; ii++)
-  {
-#if 0
-    if(!(strcmp(argv[ii], "-t")))
-    {
-      ii++;
-      threads = atoi(argv[ii]);
-    }
-    else if(!(strcmp(argv[ii], "-d")))
-    {
-      ii++;
-      dims = atoi(argv[ii]);
-    }    
-    printf("argv[%d] = \"%s\"\n", ii, argv[ii]);
-#endif
-  }
-}
-
 static int _finished = 0;     
 int finished() { return _finished; }
 
@@ -168,4 +167,4 @@ void rs_rig_state_cpy(struct rs_rig_state *state_dest, struct rs_rig_state *stat
   state_dest->freq = state_orig->freq;
   state_dest->mode = state_orig->mode;
 }
-
+#endif /* 0 */
