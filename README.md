@@ -40,6 +40,7 @@ usage:
         and be followed optionally by (depending on the rig):
              -r <port/connection>
              -s <baud rate>
+             -o <mode>=<offset>
         The "-n <rig number>" argument defines which rig in the list
         the others are synched to on startup.  The default is the first (1).
 
@@ -55,7 +56,7 @@ Example 1:
       -m 210 -r /dev/ttyS0 -s 57600
 ```
 
-The first ```-m``` argument defines a networked rig control server at localhost port 4532.  The second  ```-m``` argument defines a Kenwood TS-870S connected to the serial port /dev/ttyS0 at 57600 baud.  On startup, rigsync will set the TS-870S's frequency and mode to match the rig control server (this is the default since there is no ```-n``` argument and the server is defined firsrt).  Thereafter, it will keep both in sync.
+The first ```-m``` argument defines a networked rig control server at localhost port 4532.  The second  ```-m``` argument defines a Kenwood TS-870S connected to the serial port /dev/ttyS0 at 57600 baud.  On startup, rigsync will set the TS-870S's frequency and mode to match the net rig control server (this is the default since there is no ```-n``` argument and the server is defined firsrt).  Thereafter, it will keep both in sync.
 
 Example 2:
 
@@ -68,6 +69,16 @@ Example 2:
 ```
 
 This defines a rig control server, a Kenwood TS-870S, and a Yaesu FT-857D.  The ```-n 2``` argument will, on startup, sync all radios to the TS-870S.
+
+Example 3:
+
+```
+  $ ./rigsync \
+    -m 210 -r /dev/ttyF1 -s 57600 \
+    -m 2 -r localhost:4532 -v -o usb=1.250 -o lsb=-1.250
+```
+
+This defines a Kenwood TS-870S and a rig control server.  The -o arguments for the rig control server define offsets for the LSB and USB modes relative to the center frequency.  Changing frequency while using either of those modes will maintain the specified offsets for the rig control server.  Changing modes will move the frequency of either the tuner or the server depending on which originated the mode change.
 
 ## Issues
 
