@@ -20,7 +20,7 @@
 
 PROGRAM = rigsync
 
-CSOURCES = main.c sync.c
+CSOURCES = main.c args.c list.c sync.c
 COBJECTS = $(CSOURCES:.c=.o)
 
 CFLAGS  = $(COPT) $(CDEF) $(CINC)
@@ -31,7 +31,7 @@ CINC    =
 LDFLAGS = $(LDOPT) $(LDDIR) $(LDLIB)
 LDOPT   =
 LDDIR   =
-LDLIB   = -lpthread -lhamlib
+LDLIB   = -lhamlib
 
 all: $(PROGRAM)
 
@@ -47,6 +47,20 @@ objclean:
 execlean:
 	$(RM) $(PROGRAM)
 
-run: $(PROGRAM)
-	./$<
+run1: $(PROGRAM)
+	./$< \
+		-m 2 -r localhost:4532 \
+		-m 210 -r /dev/ttyF1 -s 57600
 
+run2: $(PROGRAM)
+	./$< \
+		-m 2 -r localhost:4532 \
+		-m 210 -r /dev/ttyF1 -s 57600 \
+		-m 122 -r /dev/ttyF0 -s 38400 \
+		-n 2
+
+run3: $(PROGRAM)
+	./$< \
+		-m 2 -r localhost:4532 \
+		-m 122 -r /dev/ttyF0 -s 38400 \
+		-n 2
