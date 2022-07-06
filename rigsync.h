@@ -26,6 +26,11 @@
 // note Ubuntu 20.04 uses hamlib 3.3
 #include <hamlib/rig.h>
 
+// Hamlib 4.x renames FILEPATHLEN to HAMLIB_FILEPATHLEN
+#ifndef HAMLIB_FILPATHLEN
+#define HAMLIB_FILPATHLEN FILPATHLEN
+#endif
+
 struct rs_rig_state
 {
   freq_t freq;
