@@ -44,7 +44,7 @@ struct rs_rig *add_rig(rig_model_t model)
 
 void set_rig_port(struct rs_rig *rig, const char *portstr)
 {
-  strncpy(rig->rig->state.rigport.pathname, portstr, FILPATHLEN - 1);
+  strncpy(rig->rig->state.rigport.pathname, portstr, HAMLIB_FILPATHLEN - 1);
 }
 
 void set_rig_speed(struct rs_rig *rig, int speed)
