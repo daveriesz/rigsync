@@ -81,8 +81,8 @@ int xmain(int argc, char **argv)
   rigb = rig_init(modelb);
 
   riga->state.rigport.parm.serial.rate = RIG_A_SPEED;
-  strncpy(riga->state.rigport.pathname, RIG_A_PORT, FILPATHLEN - 1);
-  strncpy(rigb->state.rigport.pathname, RIG_B_PORT, FILPATHLEN - 1);
+  strncpy(riga->state.rigport.pathname, RIG_A_PORT, HAMLIB_FILPATHLEN - 1);
+  strncpy(rigb->state.rigport.pathname, RIG_B_PORT, HAMLIB_FILPATHLEN - 1);
 
   retval = rig_open(riga);
   if(retval != RIG_OK) { fprintf(stderr, "*** Could not open FT857.\n"); exit(1); }
