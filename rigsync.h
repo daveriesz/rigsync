@@ -1,10 +1,6 @@
 /*
  * rigsync.h - (C) David Riesz 2022
  *
- * This program test/control a radio using Hamlib.
- * It takes commands in interactive mode as well as
- * from command line options.
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -41,8 +37,12 @@ struct rs_rig_state
 struct rs_rig
 {
   RIG *rig;
+  rig_model_t model;
+  char *portstr;
+  int speed;
   struct rs_rig_state state;
   int dirty;
+  int number;
 };
 
 /* args.c */
@@ -64,6 +64,14 @@ void rig_sync();
 /* main.c */
 int finished();
 
+/* debug.c */
+#if DEBUG
+void set_debug_level(int level);
+int get_debug_level();
+int gprintf(int level, const char *fmt, ...);
+#else
+#define gprintf() 0
+#endif
 
 
 #endif /* __RIGSYNC_H__ */
