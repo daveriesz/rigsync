@@ -1,10 +1,6 @@
 /*
  * args.c - (C) David Riesz 2022
  *
- * This program test/control a radio using Hamlib.
- * It takes commands in interactive mode as well as
- * from command line options.
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -69,6 +65,13 @@ void read_args(int argc, char **argv)
         exit(1);
       }
     }
+#ifdef DEBUG
+    else if(!(strcmp(argv[ii], "-d")))
+    {
+      if((++ii)>=argc) { fprintf(stderr, "Argument error.\n"); exit(1); }
+      set_debug_level(atoi(argv[ii]));
+    }
+#endif
     else if(!(strcmp(argv[ii], "-h")))
     {
       usage(argc, argv);
@@ -80,24 +83,37 @@ void read_args(int argc, char **argv)
     fprintf(stderr, "At least two rigs must be defined.\n");
     exit(1);
   }
-  printf("rig count = %d\n", rig_count());
-  test_rigs();
+  gprintf(1, "rig count = %d\n", rig_count());
 }
-
 
 void usage(int argc, char **argv)
 {
   fprintf(stderr, "usage:\n");
   fprintf(stderr, "\n");
-  fprintf(stderr, "    %s <rig definition> <rig definition> ... [-n <rig number>]\n", argv[0]);
+  fprintf(stderr, "    %s <rig definition> <rig definition> ...\n", argv[0]);
+  fprintf(stderr, "            [-n <rig number>]\n");
+#ifdef DEBUG
+  fprintf(stderr, "            [-d <debug level>]\n");
+#endif
+  fprintf(stderr, "\n");
   fprintf(stderr, "        Keep defined rigs in sync.\n");
   fprintf(stderr, "        Each <rig definition> entry must start with:\n");
+  fprintf(stderr, "\n");
   fprintf(stderr, "             -m <model number>\n");
+  fprintf(stderr, "\n");
   fprintf(stderr, "        and be followed optionally by (depending on the rig):\n");
+  fprintf(stderr, "\n");
   fprintf(stderr, "             -r <port/connection>\n");
   fprintf(stderr, "             -s <baud rate>\n");
+  fprintf(stderr, "\n");
   fprintf(stderr, "        The \"-n <rig number>\" argument defines which rig in the list\n");
-  fprintf(stderr, "        the others are synched to on startup.  The default is the first (1).\n");
+  fprintf(stderr, "        the others are synched to on startup.  The default is the\n");
+  fprintf(stderr, "        first (1).\n");
+#ifdef DEBUG
+  fprintf(stderr, "\n");
+  fprintf(stderr, "        The \"-d <debug level>\" argument will cause various debug\n");
+  fprintf(stderr, "        statements to be printed depending on the debug level.\n");
+#endif
   fprintf(stderr, "\n");
   fprintf(stderr, "    %s -h\n", argv[0]);
   fprintf(stderr, "        Print this help message.\n");

@@ -1,10 +1,6 @@
 /*
  * list.c - (C) David Riesz 2022
  *
- * This program test/control a radio using Hamlib.
- * It takes commands in interactive mode as well as
- * from command line options.
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -37,18 +33,24 @@ struct rs_rig *add_rig(rig_model_t model)
 {
   rig_list = (struct rs_rig *)realloc(rig_list, sizeof(struct rs_rig)*(rig_count_value+1));
   memset(&(rig_list[rig_count_value]), 0, sizeof(struct rs_rig));
+  rig_list[rig_count_value].model = model;
   rig_list[rig_count_value].rig = rig_init(model);
+  rig_list[rig_count_value].number = rig_count_value;
   rig_count_value++;
   return &(rig_list[rig_count_value-1]);
 }
 
 void set_rig_port(struct rs_rig *rig, const char *portstr)
 {
+  if(rig->portstr) { free(rig->portstr); }
+  rig->portstr = (char *)malloc(strlen(portstr) + 1);
+  strcpy(rig->portstr, portstr);
   strncpy(rig->rig->state.rigport.pathname, portstr, HAMLIB_FILPATHLEN - 1);
 }
 
 void set_rig_speed(struct rs_rig *rig, int speed)
 {
+  rig->speed = speed;
   rig->rig->state.rigport.parm.serial.rate = speed;
 }
 
@@ -65,13 +67,14 @@ void test_rigs()
 
   for(ii=0 ; ii<rig_count() ; ii++)
   {
-    if(1) { retval = rig_open(rig_list[ii].rig); }
-    else { retval = RIG_OK; }
+    retval = rig_open(rig_list[ii].rig);
 
     if(retval != RIG_OK)
     {
-      fprintf(stderr, "*** Could not open rig %d\n", ii+1);
+      fprintf(stderr, "*** Could not open rig %d: %s\n", ii+1, rigerror(retval));
       exit(1);
     }
+    
+    gprintf(1, "opened rig: model %d, port %s, speed %d\n", rig_list[ii].model, rig_list[ii].portstr, rig_list[ii].speed);
   }
 }

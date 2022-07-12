@@ -1,5 +1,5 @@
 /*
- * main.c - (C) David Riesz 2022
+ * sync.c - (C) David Riesz 2022
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as published
@@ -16,22 +16,35 @@
  *   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef DEBUG
+
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <locale.h>
+#include <stdarg.h>
 
 #include "rigsync.h"
 
-int main(int argc, char **argv)
+static int _debug_level = 0;
+
+void set_debug_level(int level)
 {
-  setlocale(LC_NUMERIC, "");
-//  printf("abc: %'15.1f\n", 12345067890.0);
-  rig_set_debug(RIG_DEBUG_NONE);
-  read_args(argc, argv);
-  test_rigs();
-  rig_sync();
-  return 0;
+  _debug_level = level;
+  gprintf(1, "debug level set: %d\n", _debug_level);
 }
 
+int get_debug_level() { return _debug_level; }
+
+/* THIS IS NOT THREAD-SAFE */
+#define GBUF_SIZE 131072
+static char gbuf[GBUF_SIZE];
+int gprintf(int level, const char *fmt, ...)
+{
+  if(_debug_level == 0) { return 0; }
+  if(level > _debug_level) { return 0; }
+  va_list ap;
+  va_start(ap, fmt);
+  vsnprintf(gbuf, GBUF_SIZE, fmt, ap);
+  va_end(ap);
+  return fprintf(stderr, "DEBUG: %s", gbuf);
+}
+
+#endif /* DEBUG */

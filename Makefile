@@ -1,9 +1,5 @@
 # Makefile - (C) David Riesz 2022
 #
-# This program test/control a radio using Hamlib.
-# It takes commands in interactive mode as well as
-# from command line options.
-#
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU Lesser General Public License as published
 #   by the Free Software Foundation; either version 2 of the License, or
@@ -20,12 +16,12 @@
 
 PROGRAM = rigsync
 
-CSOURCES = main.c args.c list.c sync.c
+CSOURCES = main.c args.c list.c sync.c debug.c
 COBJECTS = $(CSOURCES:.c=.o)
 
 CFLAGS  = $(COPT) $(CDEF) $(CINC)
 COPT    = -O2 -g
-CDEF    =
+CDEF    = -DDEBUG
 CINC    =
 
 LDFLAGS = $(LDOPT) $(LDDIR) $(LDLIB)
