@@ -79,5 +79,5 @@ Feel free to submit a pull request if you want to contribute.  I'm not very good
 
 ## Licensing
 
-This project and its code are all licensed under the GNU LGPL license v2.1.  You all know what this means.  If you don't, read the [license file](LICENSE).
+This project and its code are all licensed under the GNU LGPL license v2.1.  You all know what this means.  If you don't, read the [license file](LICENSE?raw=1).
 
